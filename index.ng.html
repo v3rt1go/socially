@@ -1,0 +1,56 @@
+<section>
+  <h3>0. Bootstraping</h3>
+  <p>
+    Nothing here {{ 'yet' + '!' }}
+  </p>
+  <p>
+    1 + 2 = {{1+2}}
+  </p>
+</section>
+
+<section>
+  <h3>1. Static Template</h3>
+  <ul>
+    <li>
+      <span>Dubstep-Free Zone</span>
+      <p>
+        Can we please just for an evening not listen to dubstep.
+      </p>
+    </li>
+    <li>
+      <span>All dubstep all the time</span>
+      <p>
+        Get it on!
+      </p>
+    </li>
+  </ul>
+</section>
+
+<section>
+  <h3>App</h3>
+  <div ng-controller="PartiesListCtrl">
+    <form>
+      <label>Name</label>
+      <input ng-model="newParty.name">
+      <label>Description</label>
+      <input ng-model="newParty.description">
+      <!--
+      We can use .push() like a normal js array, but angular-meteor has save method
+      that has better performance and nicer syntax
+      <button ng-click="parties.push(newParty); newParty='';">Add</button>
+      -->
+      <button ng-click="parties.save(newParty); newParty='';">Add</button>
+      <button ng-click="removeAll()">Remove All</button>
+    </form>
+
+    <ul>
+      <li ng-repeat="party in parties">
+        {{party.name}}
+        <p>
+          {{party.description}}
+        </p>
+        <button ng-click="remove(party)">X</button>
+      </li>
+    </ul>
+  </div>
+</section>
