@@ -1,8 +1,8 @@
 /* globals Meteor, Parties */
-'use strict';
-
 // Here we can control the startup behavior for meteor
 Meteor.startup(function() {
+  'use strict';
+
   // Seed some test parties on app start, if non exist
   if (Parties.find().count() === 0) {
     var parties = [

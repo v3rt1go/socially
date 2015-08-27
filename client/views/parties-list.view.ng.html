@@ -1,0 +1,23 @@
+<form>
+  <label>Name</label>
+  <input ng-model="newParty.name">
+  <label>Description</label>
+  <input ng-model="newParty.description">
+  <!--
+  We can use .push() like a normal js array, but angular-meteor has save method
+  that has better performance and nicer syntax
+  <button ng-click="parties.push(newParty); newParty='';">Add</button>
+  -->
+  <button ng-click="partiesVm.parties.save(newParty); newParty='';">Add</button>
+  <button ng-click="partiesVm.removeAll()">Remove All</button>
+</form>
+
+<ul>
+  <li ng-repeat="party in partiesVm.parties">
+    <a href="/parties/{{party._id}}">{{party.name}}</a>
+    <p>
+      {{party.description}}
+    </p>
+    <button ng-click="partiesVm.remove(party)">X</button>
+  </li>
+</ul>

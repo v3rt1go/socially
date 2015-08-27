@@ -1,0 +1,21 @@
+{
+  "rules": {
+    "indent": [2, 2],
+    "quotes": [2, "single"],
+    "linebreak-style": [2, "unix"],
+    "semi": [2, "always"],
+    "wrap-iife": [2, "outside"],
+    "angular/ng_di": [2, "array"]
+  },
+  "env": {
+    "node": true,
+    "browser": true
+  },
+  "plugins": ["angular"],
+  "extends": ["eslint:recommended","angular"],
+  "globals": {
+    "Meteor": false,
+    "angular": false,
+    "Parties": true
+  }
+}

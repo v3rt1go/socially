@@ -1,3 +1,15 @@
-<body ng-app="socially">
-  <div ng-include="'index.ng.html'"></div>
+<head>
+  <!-- We also added a base tag in the head (required when using HTML5 location mode). -->
+  <base href="/">
+</head>
+<body>
+
+<div ng-app="socially">
+  <h1>
+    <a href="/parties">Home</a>
+  </h1>
+
+  <div ui-view></div>
+</div>
+
 </body>
