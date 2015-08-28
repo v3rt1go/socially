@@ -20,7 +20,7 @@
       vm.parties.remove();
     };
   };
-  
+
   // By naming our file with .ng.js meteor-angular will take care of the minification
   // process, simillar to ng-annotate so we don't have to use strings for our vars
   // app.controller('PartiesListCtrl', ['$scope', PartiesListCtrl]);

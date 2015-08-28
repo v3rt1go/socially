@@ -7,8 +7,21 @@
   We can use .push() like a normal js array, but angular-meteor has save method
   that has better performance and nicer syntax
   <button ng-click="parties.push(newParty); newParty='';">Add</button>
-  -->
   <button ng-click="partiesVm.parties.save(newParty); newParty='';">Add</button>
+  -->
+  <!--
+    $rootScope is the most upper scope in the application. Every application has
+    a single root scope. All other scopes are descendant scopes of the root scope.
+
+    To access $rootScope inside a controller you add it through the dependency
+    injection. To access $rootScope in a template you simply write $root. and then
+    the name of the property.
+  -->
+  <!--
+    We're adding currentUser._id on newParty.owner model to create owners for new
+    parties added
+  -->
+  <button ng-click="newParty.owner=$root.currentUser._id; partiesVm.parties.push(newParty)">Add</button>
   <button ng-click="partiesVm.removeAll()">Remove All</button>
 </form>
 
