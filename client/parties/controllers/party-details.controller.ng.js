@@ -9,6 +9,8 @@
     // change, but an actual - classic - save must be provided
     // vm.party = $meteor.object(Parties, $stateParams.partyId);
     vm.party = $meteor.object(Parties, $stateParams.partyId, false);
+    // Subcription to the publication is handled in the route
+    vm.users = $meteor.collection(Meteor.users, false);
 
     vm.save = function() {
       // AngularMeteorObject save method saves the current value of the object to

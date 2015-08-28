@@ -9,6 +9,12 @@
     // the $scope specific logic from our controller specific methods
     var vm = this;
 
+    // We have to subscribe to the parties publication sent from the server
+    // we could use $meteor.subscribe('parties') => returns a promise
+    // or we can use .subscribe() on the AngularMeteorCollection below
+    // this does not return a promise
+    // vm.parties = $meteor.collection(Parties).subscribe('parties');
+    // !!! We resolved the subscription in the routes file
     vm.parties = $meteor.collection(Parties);
     vm.remove = function(party) {
       // We could use splice like a normal js array, but the AngularMeteorCollection
