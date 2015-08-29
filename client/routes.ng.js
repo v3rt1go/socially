@@ -27,14 +27,7 @@
           url: '/parties',
           templateUrl: 'client/parties/views/parties-list.view.ng.html',
           controller: 'PartiesListController',
-          controllerAs: 'partiesVm',
-          resolve: {
-            // subscribe to the parties server publication using the promise
-            // returned by $meteor.subscribe
-            'partiesSubscription': ['$meteor', function($meteor) {
-              return $meteor.subscribe('parties');
-            }]
-          }
+          controllerAs: 'vm'
         })
         .state('partyDetails', {
           url: '/parties/:partyId',

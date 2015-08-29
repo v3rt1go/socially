@@ -16,6 +16,7 @@
   "globals": {
     "Meteor": false,
     "angular": false,
+    "Counts": false,
     "Parties": true
   }
 }

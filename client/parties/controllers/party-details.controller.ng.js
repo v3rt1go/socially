@@ -9,7 +9,13 @@
     // change, but an actual - classic - save must be provided
     // vm.party = $meteor.object(Parties, $stateParams.partyId);
     vm.party = $meteor.object(Parties, $stateParams.partyId, false);
-    // Subcription to the publication is handled in the route
+
+    // We have to subscribe to the users publication sent from the server
+    // we could use $meteor.subscribe('users') => returns a promise
+    // or we can use .subscribe() on the AngularMeteorCollection below
+    // this does not return a promise
+    // vm.parties = $meteor.collection(Meteor.users).subscribe('users');
+    // !!! We resolved the subscription in the routes file
     vm.users = $meteor.collection(Meteor.users, false);
 
     vm.save = function() {

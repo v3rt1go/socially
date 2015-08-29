@@ -9,7 +9,7 @@
   We can use .push() like a normal js array, but angular-meteor has save method
   that has better performance and nicer syntax
   <button ng-click="parties.push(newParty); newParty='';">Add</button>
-  <button ng-click="partiesVm.parties.save(newParty); newParty='';">Add</button>
+  <button ng-click="vm.parties.save(newParty); newParty='';">Add</button>
   -->
   <!--
     $rootScope is the most upper scope in the application. Every application has
@@ -23,16 +23,24 @@
     We're adding currentUser._id on newParty.owner model to create owners for new
     parties added
   -->
-  <button ng-click="newParty.owner=$root.currentUser._id; partiesVm.parties.push(newParty)">Add</button>
-  <button ng-click="partiesVm.removeAll()">Remove All</button>
+  <button ng-click="newParty.owner=$root.currentUser._id; vm.parties.push(newParty)">Add</button>
+  <button ng-click="vm.deleteAll()">Remove All</button>
 </form>
 
+<h1>Parties:</h1>
+<div>
+  <select ng-model="vm.orderProperty">
+    <option value="1">Ascending</option>
+    <option value="-1">Descending</option>
+  </select>
+</div>
 <ul>
-  <li ng-repeat="party in partiesVm.parties">
+  <li dir-paginate="party in vm.parties | itemsPerPage: vm.perPage" total-items="vm.partiesCount.count">
     <a href="/parties/{{party._id}}">{{party.name}}</a>
     <p>
       {{party.description}}
     </p>
-    <button ng-click="partiesVm.remove(party)">X</button>
+    <button ng-click="vm.delete(party)">X</button>
   </li>
 </ul>
+<dir-pagination-controls on-page-change="vm.pageChanged(newPageNumber)"></dir-pagination-controls>
