@@ -42,6 +42,35 @@
       {{party.description}}
     </p>
     <button ng-click="vm.delete(party)">X</button>
+
+    <div>
+      <input type="button" value="I'm going!" ng-click="vm.rsvp(party._id, 'yes')">
+      <input type="button" value="Maybe" ng-click="vm.rsvp(party._id, 'maybe')">
+      <input type="button" value="No" ng-click="vm.rsvp(party._id, 'no')">
+    </div>
+    <div>
+      Who is coming:
+      Yes - {{ (party.rsvps | filter:{rsvp:'yes'}).length }}
+      Maybe - {{ (party.rsvps | filter:{rsvp:'maybe'}).length }}
+      No - {{ (party.rsvps | filter:{rsvp:'no'}).length }}
+      <div ng-repeat="rsvp in party.rsvps | filter:{rsvp:'yes'}">
+        {{ vm.getUserById(rsvp.user) | displayName }} - {{ rsvp.rsvp }}
+      </div>
+      <div ng-repeat="rsvp in party.rsvps | filter:{rsvp:'maybe'}">
+        {{ vm.getUserById(rsvp.user) | displayName }} - {{ rsvp.rsvp }}
+      </div>
+      <div ng-repeat="rsvp in party.rsvps | filter:{rsvp:'no'}">
+        {{ vm.getUserById(rsvp.user) | displayName }} - {{ rsvp.rsvp }}
+      </div>
+    </div>
+
+    <ul>
+      Users who not responded:
+      <li ng-repeat="invitedUser in vm.outstandingInvitations(party)">
+        {{ invitedUser | displayName }}
+      </li>
+    </ul>
+
     <p><small>Posted by {{ vm.creator(party) | displayName }}</small></p>
   </li>
 </ul>

@@ -17,11 +17,14 @@
     // of the controller etc.
     vm.page = 1;
     vm.perPage = 3;
-    vm.sort = { name: 1 };
+    vm.sort = {
+      name: 1
+    };
     vm.orderProperty = '1';
 
-    // Subscribe to the users collection
-    $scope.$meteorSubscribe('users');
+    // Subscribe to the users collection. We use false to not edit on the fly
+    // the users collection from minimongo to mongo server
+    vm.users = $meteor.collection(Meteor.users, false).subscribe('users');
 
     /*
     Angular's scope variables are only watched by Angular and are not reactive vars for Meteor...
@@ -54,7 +57,7 @@
     // vm.parties = $meteor.collection(Parties); By calling Parties in collection
     // this way we return the record set. If we provide a function as an argument
     // with return Parties.find() we'll return a cursor, which is more efficient:
-    vm.parties = $meteor.collection(function () {
+    vm.parties = $meteor.collection(function() {
       return Parties.find({}, {
         sort: $scope.getReactively('vm.sort')
       });
@@ -62,16 +65,37 @@
     // We watch the vm.orderProperty var and when it changes we update vm.sort
     // since sort is encapsulated in a meteor reactive var it will also update
     // the mongo subscription
-    $scope.$watch('vm.orderProperty', function(){
+    $scope.$watch('vm.orderProperty', function() {
       if (vm.orderProperty)
-        vm.sort = {name: parseInt(vm.orderProperty)};
+        vm.sort = {
+          name: parseInt(vm.orderProperty)
+        };
     });
 
     // METHODS
-    vm.getUserById = function (userId) {
+    vm.rsvp = function(partyId, rsvp) {
+      $meteor.call('rsvp', partyId, rsvp).then(
+        function(data) {
+          $log.info('RSVP sent', data);
+        },
+        function(err) {
+          $log.error('RSVP error', err);
+        }
+      );
+    };
+    // We use underscore's filter, contains and findWhere to find out
+    // what users have been invited to the party but have not accepted the
+    // invitation yet
+    vm.outstandingInvitations = function (party) {
+      return _.filter(vm.users, function (user) {
+        return (_.contains(party.invited, user._id) &&
+        !_.findWhere(party.rsvps, {user: user._id}));
+      });
+    };
+    vm.getUserById = function(userId) {
       return Meteor.users.findOne(userId);
     };
-    vm.creator = function (party) {
+    vm.creator = function(party) {
       if (!party) {
         return;
       }
@@ -81,13 +105,10 @@
         return 'Anonymous';
       }
 
-      if ($rootScope.currentUser) {
-        if ($rootScope.currentUser._id) {
-          if (owner._id === $rootScope.currentUser._id) {
+      if ($rootScope.currentUser)
+        if ($rootScope.currentUser._id)
+          if (owner._id === $rootScope.currentUser._id)
             return 'me';
-          }
-        }
-      }
 
       return owner;
     };

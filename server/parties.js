@@ -28,6 +28,10 @@ Meteor.publish('parties', function(options, searchTerm) {
       {$and:[
         {owner: this.userId},
         {owner: {$exists: true}}
+      ]},
+      {$and:[
+        {invited: this.userId},
+        {invited: {$exists: true}}
       ]}
       // noReady: true means that the publication will be available to subscribed
       // client only when the full count has completed - see readiness on publish-counts
@@ -49,6 +53,10 @@ Meteor.publish('parties', function(options, searchTerm) {
         {owner: this.userId}, // we have access to the current user
         {owner: {$exists: true}}
       ]
-    }]
+    },
+    {$and:[
+      {invited: this.userId},
+      {invited: {$exists: true}}
+    ]}]
   }, options);
 });

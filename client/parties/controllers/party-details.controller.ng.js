@@ -51,6 +51,19 @@
       // server mongo db
       vm.party.reset();
     };
+
+    // We use the $meteor.call('methodname', arguments) syntax to call a Meteor method
+    // defined in the model class. Metheor methods return promises with a callback of
+    // function(data, err)
+    vm.invite = function(user) {
+      $log.info('trying to invite');
+      $meteor.call('invite', vm.party._id, user._id)
+      .then(function(data) {
+        $log.info('success invinting', data);
+      }, function(err) {
+        $log.error('error inviting', err);
+      });
+    };
   };
 
   angular.module('socially').controller('PartyDetailsController', ['$scope', '$meteor', '$stateParams', '$log', PartyDetailsController]);

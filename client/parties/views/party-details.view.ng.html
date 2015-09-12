@@ -11,6 +11,7 @@
   Users:
   <li ng-repeat="user in partyVm.users | uninvited:partyVm.party">
     <div>{{ user | displayName }}</div>
+    <button ng-click="partyVm.invite(user)">Invite</button>
   </li>
 </ul>
 
