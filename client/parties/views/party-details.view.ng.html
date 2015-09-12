@@ -9,8 +9,8 @@
 
 <ul>
   Users:
-  <li ng-repeat="user in partyVm.users">
-    <div>{{ user.emails[0].address }}</div>
+  <li ng-repeat="user in partyVm.users | uninvited:partyVm.party">
+    <div>{{ user | displayName }}</div>
   </li>
 </ul>
 

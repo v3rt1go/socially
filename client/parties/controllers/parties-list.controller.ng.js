@@ -2,7 +2,7 @@
 (function() {
   'use strict';
 
-  var PartiesListController = function($log, $scope, $meteor) {
+  var PartiesListController = function($log, $rootScope, $scope, $meteor) {
     // This basically replaces $scope [Y032 style]
     // $scope still has it's uses like for example $scope.$watch or other
     // methods that are directly bound to $scope, but this way we can separate
@@ -19,6 +19,9 @@
     vm.perPage = 3;
     vm.sort = { name: 1 };
     vm.orderProperty = '1';
+
+    // Subscribe to the users collection
+    $scope.$meteorSubscribe('users');
 
     /*
     Angular's scope variables are only watched by Angular and are not reactive vars for Meteor...
@@ -65,6 +68,30 @@
     });
 
     // METHODS
+    vm.getUserById = function (userId) {
+      return Meteor.users.findOne(userId);
+    };
+    vm.creator = function (party) {
+      if (!party) {
+        return;
+      }
+
+      var owner = vm.getUserById(party.owner);
+      if (!owner) {
+        return 'Anonymous';
+      }
+
+      if ($rootScope.currentUser) {
+        if ($rootScope.currentUser._id) {
+          if (owner._id === $rootScope.currentUser._id) {
+            return 'me';
+          }
+        }
+      }
+
+      return owner;
+    };
+
     vm.pageChanged = function(newPage) {
       vm.page = newPage;
     };
@@ -82,5 +109,5 @@
   // By naming our file with .ng.js meteor-angular will take care of the minification
   // process, simillar to ng-annotate so we don't have to use strings for our vars
   // app.controller('PartiesListCtrl', ['$scope', PartiesListCtrl]);
-  angular.module('socially').controller('PartiesListController', ['$log', '$scope', '$meteor', PartiesListController]);
+  angular.module('socially').controller('PartiesListController', ['$log', '$rootScope', '$scope', '$meteor', PartiesListController]);
 }());

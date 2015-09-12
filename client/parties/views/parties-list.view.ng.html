@@ -42,6 +42,7 @@
       {{party.description}}
     </p>
     <button ng-click="vm.delete(party)">X</button>
+    <p><small>Posted by {{ vm.creator(party) | displayName }}</small></p>
   </li>
 </ul>
 <dir-pagination-controls on-page-change="vm.pageChanged(newPageNumber)"></dir-pagination-controls>
