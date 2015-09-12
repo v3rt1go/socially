@@ -40,10 +40,16 @@
             }],
             'usersSubscription': ['$meteor', function($meteor) {
               return $meteor.subscribe('users');
-            }],
-            'partiesSubscription': ['$meteor', function($meteor) {
-              return $meteor.subscribe('parties');
             }]
+            // We removed the subscription from here in order to have it
+            // in the controller with $scope.$meteorSubscribe. Calling $scope.$meteorSubscribe
+            // instead of $meteor.subscribe binds the subscription to the $scope of the controller
+            // and to it's lifetime. This means that the subscription is stopped when the controller
+            // is closed (when we navigate away from it) avoiding issues with overriding
+            // subscriptions with the same name from other controllers.
+            // 'partiesSubscription': ['$meteor', function($meteor) {
+            //   return $meteor.subscribe('parties');
+            // }]
           }
         });
 

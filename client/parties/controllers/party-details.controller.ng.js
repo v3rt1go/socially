@@ -1,7 +1,7 @@
 (function() {
   'use strict';
 
-  var PartyDetailsController = function($meteor, $stateParams, $log) {
+  var PartyDetailsController = function($scope, $meteor, $stateParams, $log) {
     var vm = this;
     // $meteor.object takes an optional third argument, that defaults to true.
     // If set to false, the returned meteor object will not support live edits,
@@ -17,6 +17,23 @@
     // vm.parties = $meteor.collection(Meteor.users).subscribe('users');
     // !!! We resolved the subscription in the routes file
     vm.users = $meteor.collection(Meteor.users, false);
+
+    // We are going to subscribe to the parties publication from the controller
+    // using $scope.$meteorSubscribe in order to stop the subscription when the
+    // ctrl is closed. This way we won't override the parties subscription from the
+    // list controller, when we hit back in the browser and return to it
+    $scope.$meteorSubscribe('parties');
+
+    // If we want to control when a subscription is closed, and not rely on the
+    // controller to close and $scope to be destoyed - which closes the subscription
+    // we can use then on the $meteorSubscribe promise to get a handle for the
+    // subscription:
+    // var partiesSubscriptionHandle = null;
+    // $scope.$meteorSubscribe('parties').then(function(subscriptionHandle) {
+    //   partiesSubscriptionHandle = subscriptionHandle;
+    // });
+    // // and when we want to close the subscription we simply do:
+    // partiesSubscriptionHandle.stop();
 
     vm.save = function() {
       // AngularMeteorObject save method saves the current value of the object to
@@ -36,5 +53,5 @@
     };
   };
 
-  angular.module('socially').controller('PartyDetailsController', ['$meteor', '$stateParams', '$log', PartyDetailsController]);
+  angular.module('socially').controller('PartyDetailsController', ['$scope', '$meteor', '$stateParams', '$log', PartyDetailsController]);
 }());

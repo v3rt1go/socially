@@ -34,7 +34,7 @@
         limit: parseInt($scope.getReactively('vm.perPage')),
         skip: parseInt(($scope.getReactively('vm.page') - 1) * $scope.getReactively('vm.perPage')),
         sort: $scope.getReactively('vm.sort')
-      }).then(function() {
+      }, $scope.getReactively('vm.search')).then(function() {
         // when the subcription promise resolves we load the result returned by Counts
         // on the numberOfParties publication on the partiesCount vm prop. We use
         // false as the third argument to avoid changing this from the client

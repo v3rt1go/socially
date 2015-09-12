@@ -1,7 +1,11 @@
 // This function defines what to publish from the server to the client
 // We pass pagination and sorting params in options
-Meteor.publish('parties', function(options) {
+Meteor.publish('parties', function(options, searchTerm) {
   'use strict';
+
+  if (searchTerm == null) {
+    searchTerm = '';
+  }
 
   // Counts is provided by the tmeasday:publish-counts meteor package
   // and is used to return in real time the count of a publication from a
@@ -12,6 +16,10 @@ Meteor.publish('parties', function(options) {
   // the full record set coursor, so we have to add a way to count the full
   // server coursor - with sort options added ofc.
   Counts.publish(this, 'numberOfParties', Parties.find({
+    'name': {
+      '$regex': '.*' + searchTerm + '.*',
+      '$options': 'i'
+    },
     $or:[
       {$and:[
         {'public': true},
@@ -27,6 +35,10 @@ Meteor.publish('parties', function(options) {
     ]}), { noReady: true });
 
   return Parties.find({
+    'name': {
+      '$regex': '.*' + searchTerm + '.*',
+      '$options': 'i'
+    },
     $or: [{
       $and: [
         {'public': true},
