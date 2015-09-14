@@ -1,4 +1,4 @@
-<form>
+<form ng-show="$root.currentUser">
   <label>Name</label>
   <input ng-model="newParty.name">
   <label>Description</label>
@@ -26,6 +26,10 @@
   <button ng-click="newParty.owner=$root.currentUser._id; vm.parties.push(newParty)">Add</button>
   <button ng-click="vm.deleteAll()">Remove All</button>
 </form>
+<!-- $root.loggingIn is true/defined when we're in the process of loggin in  -->
+<div ng-hide="$root.currentUser || $root.loggingIn">
+  <p>You must be logged in to create a party!</p>
+</div>
 
 <h1>Parties:</h1>
 <div>
@@ -41,12 +45,15 @@
     <p>
       {{party.description}}
     </p>
-    <button ng-click="vm.delete(party)">X</button>
+    <button ng-click="vm.delete(party)" ng-show="$root.currentUser && $root.currentUser._id == party.owner">X</button>
 
-    <div>
+    <div ng-show="$root.currentUser">
       <input type="button" value="I'm going!" ng-click="vm.rsvp(party._id, 'yes')">
       <input type="button" value="Maybe" ng-click="vm.rsvp(party._id, 'maybe')">
       <input type="button" value="No" ng-click="vm.rsvp(party._id, 'no')">
+    </div>
+    <div ng-hide="$root.currentUser">
+      <p>Log in to RSVP to this party</p>
     </div>
     <div>
       Who is coming:
@@ -64,7 +71,14 @@
       </div>
     </div>
 
-    <ul>
+    <!--
+      The difference between ng-if and ng-show/hide is that ng-show/hide hides
+      the element from the view using CSS, while ng-if completely removes it
+      from the DOM. The element is not present there anymore.
+
+      Public parties are public and don't need invitations sent
+    -->
+    <ul ng-if="!party.public">
       Users who not responded:
       <li ng-repeat="invitedUser in vm.outstandingInvitations(party)">
         {{ invitedUser | displayName }}

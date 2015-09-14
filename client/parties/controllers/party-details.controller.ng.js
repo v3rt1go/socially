@@ -64,6 +64,16 @@
         $log.error('error inviting', err);
       });
     };
+
+    // We use the canInvite function to determine if the user can invite other
+    // users to the party (party is not public, and user is owner of the party)
+    vm.canInvite = function() {
+      if (!vm.party) {
+        return false;
+      }
+
+      return !vm.party.public && vm.party.owner === Meteor.userId();
+    };
   };
 
   angular.module('socially').controller('PartyDetailsController', ['$scope', '$meteor', '$stateParams', '$log', PartyDetailsController]);

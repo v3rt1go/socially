@@ -2,16 +2,20 @@
   Here you will see the details of party number:
 </p>
 
-<input ng-model="partyVm.party.name">
-<input ng-model="partyVm.party.description">
+<input ng-model="partyVm.party.name" ng-disabled="partyVm.party.owner != $root.currentUser._id">
+<input ng-model="partyVm.party.description" ng-disabled="partyVm.party.owner != $root.currentUser._id">
 <label>Is public</label>
-<input type="checkbox" ng-model="partyVm.party.public">
+<input type="checkbox" ng-model="partyVm.party.public" ng-disabled="partyVm.party.owner != $root.currentUser._id">
 
-<ul>
-  Users:
+<ul ng-show="partyVm.canInvite()">
+  Users to invite:
   <li ng-repeat="user in partyVm.users | uninvited:partyVm.party">
     <div>{{ user | displayName }}</div>
     <button ng-click="partyVm.invite(user)">Invite</button>
+  </li>
+  <!-- If there are no more users viable for invites -->
+  <li ng-if="(partyVm.users | uninvited:partyVm.party).length <= 0">
+    Everyone is already invited.
   </li>
 </ul>
 
@@ -19,6 +23,6 @@
   If using false as the third argument in $meteor.object we must provide
   a save action for the meteor object to update the server db
  -->
-<button ng-click="partyVm.save()">Save</button>
-<button ng-click="partyVm.reset()">Reset Form</button>
+<button ng-click="partyVm.save()" ng-disabled="partyVm.party.owner != $root.currentUser._id">Save</button>
+<button ng-click="partyVm.reset()" ng-disabled="partyVm.party.owner != $root.currentUser._id">Reset Form</button>
 <button ui-sref="parties">Cancel</button>
