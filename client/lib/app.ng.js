@@ -1,7 +1,7 @@
 (function() {
   'use strict';
 
-  angular.module('socially', ['angular-meteor', 'ui.router', 'angularUtils.directives.dirPagination', 'uiGmapgoogle-maps']);
+  angular.module('socially', ['angular-meteor', 'ui.router', 'angularUtils.directives.dirPagination', 'uiGmapgoogle-maps', 'ui.bootstrap']);
 
   // Bootstrap angular application - avoid using ng-app in body
   // to support multiple ready events from different platforms

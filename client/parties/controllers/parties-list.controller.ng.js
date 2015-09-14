@@ -2,12 +2,74 @@
 (function() {
   'use strict';
 
-  var PartiesListController = function($log, $rootScope, $scope, $meteor, $state) {
+  var PartiesListController = function($log, $rootScope, $scope, $meteor, $state, $modal) {
     // This basically replaces $scope [Y032 style]
     // $scope still has it's uses like for example $scope.$watch or other
     // methods that are directly bound to $scope, but this way we can separate
     // the $scope specific logic from our controller specific methods
     var vm = this;
+
+    var styles1 = [
+      {
+        "featureType": "landscape.natural",
+        "elementType": "geometry.fill",
+        "stylers": [{"visibility": "on"}, {"color": "#e0efef"}]
+      }, {
+        "featureType": "poi",
+        "elementType": "geometry.fill",
+        "stylers": [{"visibility": "on"}, {"hue": "#1900ff"}, {"color": "#c0e8e8"}]
+      }, {
+        "featureType": "road",
+        "elementType": "geometry",
+        "stylers": [{"lightness": 100}, {"visibility": "simplified"}]
+      }, {
+        "featureType": "road",
+        "elementType": "labels",
+        "stylers": [{"visibility": "off"}]
+      }, {
+        "featureType": "transit.line",
+        "elementType": "geometry",
+        "stylers": [{"visibility": "on"}, {"lightness": 700}]
+      }, {
+        "featureType": "water",
+        "elementType": "all",
+        "stylers": [{"color": "#7dcdcd"}]}
+    ];
+    var styles2 = [
+      {
+        "featureType": "administrative",
+        "elementType": "labels.text.fill",
+        "stylers": [{"color": "#444444"}]
+      }, {
+        "featureType": "landscape",
+        "elementType": "all",
+        "stylers": [{"color": "#f2f2f2"}]
+      }, {
+        "featureType": "poi",
+        "elementType": "all",
+        "stylers": [{"visibility": "off"}]
+      }, {
+        "featureType": "road",
+        "elementType": "all",
+        "stylers": [{"saturation": -100}, {"lightness": 45}]
+      }, {
+        "featureType": "road.highway",
+        "elementType": "all",
+        "stylers": [{"visibility": "simplified"}]
+      }, {
+        "featureType": "road.arterial",
+        "elementType": "labels.icon",
+        "stylers": [{"visibility": "off"}]
+      }, {
+        "featureType": "transit",
+        "elementType": "all",
+        "stylers": [{"visibility": "off"}]
+      }, {
+        "featureType": "water",
+        "elementType": "all",
+        "stylers": [{"color": "#46bcec"}, {"visibility": "on"}]
+      }
+    ];
 
     // PAGINATION:
     // In order to support pagination on the client and server slide
@@ -70,8 +132,10 @@
             $state.go('partyDetails', {partyId: party._id});
           };
         });
+
         vm.map = {
           center: { latitude: 45, longitude: -73 },
+          options: { styles: styles2, maxZoom: 10 },
           zoom: 8
         };
 
@@ -141,10 +205,39 @@
     vm.deleteAll = function() {
       vm.parties.remove();
     };
+
+    // $modal interaction methods added by ui.bootstrap (meteor add angularui:angular-ui-bootstrap@0.13.0)
+    vm.openAddNewPartyModal = function () {
+      var modalInstance = $modal.open({
+        animation: true,
+        templateUrl: 'client/parties/views/add-new-party-modal.ng.html',
+        controller: 'AddNewPartyCtrl',
+        controllerAs: 'vm',
+        resolve: {
+          parties: function () {
+            return vm.parties;
+          }
+        }
+      });
+
+      modalInstance.result.then(function() {}, function() {});
+    };
+    vm.isRSVP = function (rsvp, party) {
+      if (!$rootScope.currentUser._id)
+        return false;
+
+      var rsvpIndex = party.myRsvpIndex;
+      rsvpIndex = rsvpIndex || _.indexOf(_.pluck(party.rsvps, 'user'), $rootScope.currentUser._id);
+
+      if (rsvpIndex !== -1) {
+        party.myRsvpIndex = rsvpIndex;
+        return party.rsvps[rsvpIndex].rsvp === rsvp;
+      }
+    };
   };
 
   // By naming our file with .ng.js meteor-angular will take care of the minification
   // process, simillar to ng-annotate so we don't have to use strings for our vars
   // app.controller('PartiesListCtrl', ['$scope', PartiesListCtrl]);
-  angular.module('socially').controller('PartiesListController', ['$log', '$rootScope', '$scope', '$meteor', '$state', PartiesListController]);
+  angular.module('socially').controller('PartiesListController', ['$log', '$rootScope', '$scope', '$meteor', '$state', '$modal', PartiesListController]);
 }());
