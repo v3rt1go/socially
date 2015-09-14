@@ -39,6 +39,24 @@
     <option value="-1">Descending</option>
   </select>
 </div>
+<!-- Display all parties as markers on the map -->
+<!--
+  The attributes we use:
+  models - the scope array that the markers represent.
+  coords - the property the holds the location.
+  click - handler for the click event on a marker - onClicked method has to be
+  a property of the model iterated (party in vm.parties)
+  fit - a boolean to automatically zoom the map to fit all the markers inside
+  idKey - the property that holds the unique id of the array
+  doRebuildAll - a refresh option, will help us to refresh the markers in search
+-->
+<div class="angular-google-map-container">
+  <ui-gmap-google-map center="vm.party.location || vm.map.center" zoom="vm.map.zoom">
+    <ui-gmap-markers models="vm.parties" coords="'location'" click="onClicked()"
+                     fit="true" idkey="'_id'" doRebuildAll="true">
+    </ui-gmap-markers>
+  </ui-gmap-google-map>
+</div>
 <ul>
   <li dir-paginate="party in vm.parties | itemsPerPage: vm.perPage" total-items="vm.partiesCount.count">
     <a href="/parties/{{party._id}}">{{party.name}}</a>

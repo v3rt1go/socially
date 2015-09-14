@@ -35,6 +35,52 @@
     // // and when we want to close the subscription we simply do:
     // partiesSubscriptionHandle.stop();
 
+    // This map propery object is interpreted by the ui-gmap-google-map directive
+    // added from meteor add angularui:angular-google-maps
+
+    /*
+      What happened here:
+
+      We added the click event to the map. Every time the user clicks the map, we take the location
+      from the click event's params and save it as the party's new location. Notice that in the end we
+      call $scope.$apply(); this is because that event comes outside of Angular and we need to let Angular
+      know that something has change so it will run another $digest cycle.
+      We defined the options object under the marker to specify the marker is draggable.
+      We handled the dragend event that happens when the marker is droped in a new location.
+      We take the location from the event's params and save it as the party's new location.
+    */
+    vm.map = {
+      center: { latitude: 45, longitude: -73 },
+      zoom: 8,
+      events: {
+        click: function (mapModel, eventName, originalEventArgs) {
+          if (!vm.party)
+            return;
+
+          if (!vm.party.location)
+            vm.party.location = {};
+
+          vm.party.location.latitude = originalEventArgs[0].latLng.lat();
+          vm.party.location.longitude = originalEventArgs[0].latLng.lng();
+          // $scope apply required because this event handler is outside of the angular domain
+          // ie: in the google maps embedded frame
+          $scope.$apply();
+        }
+      },
+      marker: {
+        options: { draggable: true },
+        events: {
+          dragend: function (marker, eventName, args) {
+            if (!vm.party.location)
+              vm.party.location = {};
+
+            vm.party.location.latitude = marker.getPosition().lat();
+            vm.party.location.longitude = marker.getPosition().lng();
+          }
+        }
+      }
+    };
+
     vm.save = function() {
       // AngularMeteorObject save method saves the current value of the object to
       // the server mongo db. save() returns a promise with the # of objects affected
@@ -64,7 +110,6 @@
         $log.error('error inviting', err);
       });
     };
-
     // We use the canInvite function to determine if the user can invite other
     // users to the party (party is not public, and user is owner of the party)
     vm.canInvite = function() {

@@ -19,6 +19,24 @@
   </li>
 </ul>
 
+<div class="party-details-maps">
+  <div class="angular-google-map-container">
+    <!-- This directive is provided by meteor add angularui:angular-google-maps -->
+    <!--
+      We use the following attributes:
+      coords - where is the scope the marker location will be binded to.
+      options - object that holds the marker options. We are going to use the draggable option.
+      events - handling the events on the marker. We will use the click event.
+      idKey - where in the scope there exists the unique id of the object that the marker represent.
+    -->
+    <ui-gmap-google-map center="partyVm.party.location || partyVm.map.center" events="partyVm.map.events" zoom="partyVm.map.zoom">
+      <ui-gmap-marker coords="partyVm.party.location" options="partyVm.map.marker.options"
+                    events="partyVm.map.marker.events" idkey="partyVm.party._id">
+      </ui-gmap-marker>
+    </ui-gmap-google-map>
+  </div>
+</div>
+
 <!--
   If using false as the third argument in $meteor.object we must provide
   a save action for the meteor object to update the server db

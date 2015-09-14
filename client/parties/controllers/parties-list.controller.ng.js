@@ -2,7 +2,7 @@
 (function() {
   'use strict';
 
-  var PartiesListController = function($log, $rootScope, $scope, $meteor) {
+  var PartiesListController = function($log, $rootScope, $scope, $meteor, $state) {
     // This basically replaces $scope [Y032 style]
     // $scope still has it's uses like for example $scope.$watch or other
     // methods that are directly bound to $scope, but this way we can separate
@@ -22,33 +22,6 @@
     };
     vm.orderProperty = '1';
 
-    // Subscribe to the users collection. We use false to not edit on the fly
-    // the users collection from minimongo to mongo server
-    vm.users = $meteor.collection(Meteor.users, false).subscribe('users');
-
-    /*
-    Angular's scope variables are only watched by Angular and are not reactive vars for Meteor...
-    For that angular-meteor created getReactively - a way to make an Angular scope
-    variable to a reactive variable. In order to make the subscription run each time
-    something changes in one of the parameters, we need to place it inside an autorun block.
-    To do that, we are going to use the $meteor.autorun function
-    */
-    $meteor.autorun($scope, function() {
-      $meteor.subscribe('parties', {
-        // We then use $scope.getReactively('controllerAs.prop_name') to encapsulate the $scope vars
-        // that only angular watches in reactive vars that meteor also watches
-        limit: parseInt($scope.getReactively('vm.perPage')),
-        skip: parseInt(($scope.getReactively('vm.page') - 1) * $scope.getReactively('vm.perPage')),
-        sort: $scope.getReactively('vm.sort')
-      }, $scope.getReactively('vm.search')).then(function() {
-        // when the subcription promise resolves we load the result returned by Counts
-        // on the numberOfParties publication on the partiesCount vm prop. We use
-        // false as the third argument to avoid changing this from the client
-        vm.partiesCount = $meteor.object(Counts, 'numberOfParties', false);
-      });
-    });
-
-
     // SORTING:
     // we also need to add the sort modifier to the way we get the collection data
     // from the Minimongo. That is because the sorting is not saved when the data is
@@ -62,6 +35,49 @@
         sort: $scope.getReactively('vm.sort')
       });
     });
+
+    // Subscribe to the users collection. We use false to not edit on the fly
+    // the users collection from minimongo to mongo server
+    vm.users = $meteor.collection(Meteor.users, false).subscribe('users');
+
+    /*
+      Angular's scope variables are only watched by Angular and are not reactive vars for Meteor...
+      For that angular-meteor created getReactively - a way to make an Angular scope
+      variable to a reactive variable. In order to make the subscription run each time
+      something changes in one of the parameters, we need to place it inside an autorun block.
+      To do that, we are going to use the $meteor.autorun function
+    */
+    $meteor.autorun($scope, function() {
+      $meteor.subscribe('parties', {
+        // We then use $scope.getReactively('controllerAs.prop_name') to encapsulate the $scope vars
+        // that only angular watches in reactive vars that meteor also watches
+        limit: parseInt($scope.getReactively('vm.perPage')),
+        skip: parseInt(($scope.getReactively('vm.page') - 1) * $scope.getReactively('vm.perPage')),
+        sort: $scope.getReactively('vm.sort')
+      }, $scope.getReactively('vm.search')).then(function() {
+        // when the subcription promise resolves we load the result returned by Counts
+        // on the numberOfParties publication on the partiesCount vm prop. We use
+        // false as the third argument to avoid changing this from the client
+        vm.partiesCount = $meteor.object(Counts, 'numberOfParties', false);
+
+        /*
+          Adding to each party a function that handles a click event with the party's specific information
+          Initializing the map object
+          Defining a function to handle the click. navigates to the party's page.
+        */
+        vm.parties.forEach( function (party) {
+          party.onClicked = function () {
+            $state.go('partyDetails', {partyId: party._id});
+          };
+        });
+        vm.map = {
+          center: { latitude: 45, longitude: -73 },
+          zoom: 8
+        };
+
+      });
+    });
+
     // We watch the vm.orderProperty var and when it changes we update vm.sort
     // since sort is encapsulated in a meteor reactive var it will also update
     // the mongo subscription
@@ -130,5 +146,5 @@
   // By naming our file with .ng.js meteor-angular will take care of the minification
   // process, simillar to ng-annotate so we don't have to use strings for our vars
   // app.controller('PartiesListCtrl', ['$scope', PartiesListCtrl]);
-  angular.module('socially').controller('PartiesListController', ['$log', '$rootScope', '$scope', '$meteor', PartiesListController]);
+  angular.module('socially').controller('PartiesListController', ['$log', '$rootScope', '$scope', '$meteor', '$state', PartiesListController]);
 }());
